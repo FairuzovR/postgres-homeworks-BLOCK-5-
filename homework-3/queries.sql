@@ -11,10 +11,19 @@ WHERE employees.city = customers.city and shippers.company_name = 'United Packag
 -- имя поставщика и его телефон (contact_name и phone в табл suppliers) для таких продуктов,
 -- которые не сняты с продажи (поле discontinued) и которых меньше 25 и которые в категориях Dairy Products и Condiments.
 -- Отсортировать результат по возрастанию количества оставшегося товара.
+SELECT products.product_name, products.units_in_stock, suppliers.company_name, suppliers.phone FROM products
+INNER JOIN suppliers USING(supplier_id)
+INNER JOIN categories USING(category_id)
+WHERE products.discontinued <> 1 AND products.units_in_stock < 25 AND categories.category_name IN ('Dairy Products', 'Condiments')
+ORDER BY products.units_in_stock
 
 
 -- 3. Список компаний заказчиков (company_name из табл customers), не сделавших ни одного заказа
-
+SELECT customers.company_name FROM customers
+FULL JOIN orders USING(customer_id)
+WHERE orders.order_id IS NULL
 
 -- 4. уникальные названия продуктов, которых заказано ровно 10 единиц (количество заказанных единиц см в колонке quantity табл order_details)
 -- Этот запрос написать именно с использованием подзапроса.
+SELECT DISTINCT product_name FROM products
+WHERE product_id IN (SELECT DISTINCT product_id FROM order_details WHERE quantity = 10)
